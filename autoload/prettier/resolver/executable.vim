@@ -3,6 +3,7 @@ let s:ROOT_DIR = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 " By default we will search for the following
 " => user defined prettier cli path from vim configuration file
 " => locally installed prettier inside node_modules on any parent folder
+" => locally installed prettier inside node_modules in the directory structure of the file being formatted
 " => globally installed prettier
 " => vim-prettier prettier installation
 " => if all fails suggest install
@@ -15,6 +16,11 @@ function! prettier#resolver#executable#getPath() abort
   let l:localExec = s:ResolveExecutable(getcwd())
   if executable(l:localExec)
     return fnameescape(l:localExec)
+  endif
+
+  let l:fileExec = s:ResolveExecutable(expand('%'))
+  if executable(l:fileExec)
+    return fnameescape(l:fileExec)
   endif
 
   let l:globalExec = s:ResolveExecutable()
